@@ -21,6 +21,6 @@ docker info >/dev/null 2>&1 || { echo >&2 "Docker server is not running? "; exit
 
 docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating the container" ; docker build -t $container_name -f $SCRIPTPATH/Dockerfile --build-arg USER_ID=$(id -u)  --build-arg GROUP_ID=$(id -g) .  )
 
-
+# We run in privileged mode to have access to performance counters.
 docker run  -it --privileged -v $(pwd):/project:Z  $container_name sh -c "$COMMAND"
 
