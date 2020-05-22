@@ -32,6 +32,12 @@ You can even run perf though you need to know where to find it:
 ./run ' /usr/lib/linux-tools/5.4.0-26-generic/perf stat ls '
 ```
 
+If you just want to enter in a bash shell, you can do so as well:
+
+```bash
+./run bash
+```
+
 If you like, you can even call the script from a Makefile. It is just a regular bash
 script.
 
