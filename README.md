@@ -4,7 +4,7 @@
 This project provides a simple bash script that one can use to do programming tasks in a
 Docker environment capturing a standard Ubuntu distribution. 
 
-You can simply copy the Dockerfile and run script in any repos:qitory.
+You can simply copy the Dockerfile and run script in any repository.
 The Dockerfile sets up an image (called by default programming_station-for-yourname). 
 The image is built once when you first call the script. It contains the compilers
 and build tools. It does not contain your code: your code is meant to go in 
