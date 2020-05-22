@@ -45,6 +45,7 @@ Features:
 
 - This works whether you have an ARM-based server or an Intel based mac.
 - The files created in the directory will be owned by you (the user).
+- I works on systems supporting Security-Enhanced Linux.
 
 Caution:
 
