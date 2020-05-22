@@ -51,6 +51,10 @@ Caution:
 
 - You should map specific directories insider a user directory. Do you use this script to map system-owned  directories like `/home/` or `/usr/` as it would be unsafe.
 
+Tricks:
+- If you put the `run` command in your PATH, you will be able to run it from everywhere.
+- A handy command to run from time to time is `docker system prune`, as it can help you remove unneeded images.
+
 ## Requirements
 
 - A working docker installation under Linux, macOS or related system.

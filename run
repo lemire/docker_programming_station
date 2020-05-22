@@ -19,8 +19,15 @@ command -v docker >/dev/null 2>&1 || { echo >&2 "Please install docker. E.g., go
 
 docker info >/dev/null 2>&1 || { echo >&2 "Docker server is not running? "; exit 1; }
 
-docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating the container" ; docker build -t $container_name -f $SCRIPTPATH/Dockerfile --build-arg USER_ID=$(id -u)  --build-arg GROUP_ID=$(id -g) .  )
+SSHPARAM=""
+[ -e "${SSH_AUTH_SOCK}" ] && SSHPARAM="--volume /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock  --env SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock"
+[ -e "${HOME}/.ssh" ] && SSHPARAM="--volume ${HOME}/.ssh:/home/$USER/.ssh:ro"  
+
+
+docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating the container" ; docker build -t $container_name -f $SCRIPTPATH/Dockerfile --build-arg USER_NAME="$USER"  --build-arg USER_ID=$(id -u)  --build-arg GROUP_ID=$(id -g) .  )
 
 # We run in privileged mode to have access to performance counters.
-docker run  -it --privileged -v $(pwd):$(pwd):Z  -w $(pwd)  $container_name sh -c "$COMMAND"
+docker run --rm -it --privileged $SSHPARAM -v $(pwd):$(pwd):Z  -w $(pwd)  $container_name sh -c "$COMMAND"
+
+
 
