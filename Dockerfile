@@ -5,13 +5,11 @@ FROM ubuntu:20.10
 # We install some useful packages
  RUN apt-get update -qq
  RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
- RUN apt-get install -y cmake g++ g++-9 git clang++-9 linux-tools-generic  
- RUN mkdir project
+ RUN apt-get install -y vim golang clang-format sudo python wget cmake g++ g++-9 git clang++-9 linux-tools-generic  
 
  RUN addgroup --gid $GROUP_ID user; exit 0
  RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID user; exit 0
+ RUN echo 'root:Docker!' | chpasswd
  USER user
  RUN gcc --version
  RUN clang-9 --version
-
- WORKDIR /project
