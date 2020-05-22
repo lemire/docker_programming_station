@@ -46,6 +46,9 @@ Features:
 - This works whether you have an ARM-based server or an Intel based mac.
 - The files created in the directory will be owned by you (the user).
 
+Caution:
+
+- You should map specific directories insider a user directory. Do you use this script to map system-owned  directories like `/home/` or `/usr/` as it would be unsafe.
 
 ## Requirements
 
