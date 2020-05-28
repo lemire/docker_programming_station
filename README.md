@@ -49,7 +49,7 @@ Features:
 
 Caution:
 - The first time you run the script, it builds the image which is an expensive process. It is done only once, however.
-- You should map specific directories insider a user directory. Do you use this script to map system-owned  directories like `/home/` or `/usr/` as it would be unsafe.
+- You should map specific directories insider a user directory. Do not use this script to map system-owned  directories like `/home/` or `/usr/` as it would be unsafe.
 
 Tricks:
 - If you put the `run` command in your PATH, you will be able to run it from everywhere.
