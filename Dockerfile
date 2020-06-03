@@ -10,6 +10,7 @@ FROM ubuntu:20.10
  RUN addgroup --gid $GROUP_ID user; exit 0
  RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID $USER_NAME; exit 0
  RUN echo 'root:Docker!' | chpasswd
+ ENV TERM xterm-256color
  USER $USER_NAME
  RUN gcc --version
  RUN cmake --version
