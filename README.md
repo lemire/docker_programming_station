@@ -14,7 +14,8 @@ multiple projects.
 
 Then it passes your command: your command runs in the current
 directory but within the image. Docker does not copy your code to the image: everything
-is read and stored in the current directory. 
+is read and stored in the current directory. You also have only access to the current
+directory from within docker.
 
 So you can do basic programming tasks:
 
@@ -40,6 +41,10 @@ If you just want to enter in a bash shell, you can do so as well:
 
 If you like, you can even call the script from a Makefile. It is just a regular bash
 script.
+
+You can put `run` in your `PATH` by adding the `docker_programming_station` directory to it and
+thus be able to call `run` from everywhere. Your are not limited to one instance. However, each
+instance will only have access to its directory.
 
 Features: 
 
