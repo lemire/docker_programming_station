@@ -4,7 +4,6 @@
 This project provides a simple bash script that one can use to do programming tasks in a
 Docker environment capturing a standard Ubuntu distribution. 
 
-You can simply copy the Dockerfile and run script in any repository.
 The Dockerfile sets up an image (called by default programming_station-for-yourname). 
 The image is built once when you first call the script. It contains the compilers
 and build tools. It does not contain your code: your code is meant to go in 
@@ -14,7 +13,8 @@ multiple projects.
 
 Then it passes your command: your command runs in the current
 directory but within the image. Docker does not copy your code to the image: everything
-is read and stored in the current directory. 
+is read and stored in the current directory. You also have only access to the current
+directory from within docker.
 
 So you can do basic programming tasks:
 
@@ -40,6 +40,14 @@ If you just want to enter in a bash shell, you can do so as well:
 
 If you like, you can even call the script from a Makefile. It is just a regular bash
 script.
+
+You can put `run` in your `PATH` by adding the `docker_programming_station` directory to it and
+thus be able to call `run` from everywhere. Your are not limited to one instance. However, each
+instance will only have access to its directory. However, the first time the image is constructed,
+you might want to run it in the `docker_programming_station` directory otherwise you may get
+the error "The Dockerfile  must be within the build context".
+You can simply copy the Dockerfile and the run script in any repository if you prefer to avoid messing
+with the `PATH` variable.
 
 Features: 
 
