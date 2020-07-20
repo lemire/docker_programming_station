@@ -5,7 +5,7 @@ FROM ubuntu:20.10
 # We install some useful packages
  RUN apt-get update -q
  RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
- RUN apt-get install -y vim golang clang-format sudo python wget cmake g++ g++-9 git clang++-9 linux-tools-generic  
+ RUN apt-get install -y vim golang clang-format sudo python wget cmake g++ g++-9 git clang++-9 linux-tools-generic  libboost-all-dev
  RUN apt-get -y install python3-pip
  RUN pip3 install ipython
 
