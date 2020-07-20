@@ -35,18 +35,18 @@ You can even run perf though you need to know where to find it:
 If you just want to enter in a bash shell, you can do so as well:
 
 ```bash
-./run bash
+./run-docker-station bash
 ```
 
 If you like, you can even call the script from a Makefile. It is just a regular bash
 script.
 
-You can put `run` in your `PATH` by adding the `docker_programming_station` directory to it and
-thus be able to call `run` from everywhere. Your are not limited to one instance. However, each
+You can put `run-docker-station` in your `PATH` by adding the `docker_programming_station` directory to it and
+thus be able to call `run-docker-station` from everywhere. Your are not limited to one instance. However, each
 instance will only have access to its directory. However, the first time the image is constructed,
 you might want to run it in the `docker_programming_station` directory otherwise you may get
 the error "The Dockerfile  must be within the build context".
-You can simply copy the Dockerfile and the run script in any repository if you prefer to avoid messing
+You can simply copy the Dockerfile and the script in any repository if you prefer to avoid messing
 with the `PATH` variable.
 
 Features: 
@@ -60,7 +60,7 @@ Caution:
 - You should map specific directories insider a user directory. Do not use this script to map system-owned  directories like `/home/` or `/usr/` as it would be unsafe.
 
 Tricks:
-- If you put the `run` command in your PATH, you will be able to run it from everywhere.
+- If you put the `run-docker-station` command in your PATH, you will be able to run it from everywhere.
 - A handy command to run from time to time is `docker system prune`, as it can help you remove unneeded images.
 - If something does not work, you can try deleting all containers and images `docker rm -vf $(docker ps -a -q) ; docker rmi -f $(docker images -a -q)`. Such a reset can solve a surprising number of otherwise mysterious problems.
 
