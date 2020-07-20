@@ -2,7 +2,7 @@
 
 if [ -z "$1" ]
   then
-    echo "The run script takes a command as a argument. E.g., try ./run 'ls' "
+    echo "The run-docker-station script takes a command as a argument. E.g., try ./run-docker-station 'ls' "
     exit 1
 fi
 
@@ -15,9 +15,9 @@ COMMAND=$@
 
 container_name=${CONTAINER_NAME:-"programming_station-for-$USER"}
 
-command -v docker >/dev/null 2>&1 || { echo >&2 "Please install docker. E.g., go to https://www.docker.com/products/docker-desktop "; exit 1; }
+command -v docker >/dev/null 2>&1 || { echo >&2 "Please install docker. E.g., go to https://www.docker.com/products/docker-desktop Type 'docker' to diagnose the problem."; exit 1; }
 
-docker info >/dev/null 2>&1 || { echo >&2 "Docker server is not running? "; exit 1; }
+docker info >/dev/null 2>&1 || { echo >&2 "Docker server is not running? type 'docker info'."; exit 1; }
 
 SSHPARAM=""
 [ -e "${SSH_AUTH_SOCK}" ] && SSHPARAM="--volume /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock  --env SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock"
