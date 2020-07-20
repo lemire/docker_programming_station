@@ -19,17 +19,17 @@ directory from within docker.
 So you can do basic programming tasks:
 
 ```bash
-./run ' gcc --version  '
-./run ' git clone https://github.com/simdjson/simdjson.git '
-./run ' mkdir build '
-./run ' cd build && cmake ../simdjson '
-./run ' cd build && cmake --build . '
+./run-docker-station ' gcc --version  '
+./run-docker-station ' git clone https://github.com/simdjson/simdjson.git '
+./run-docker-station ' mkdir build '
+./run-docker-station ' cd build && cmake ../simdjson '
+./run-docker-station ' cd build && cmake --build . '
 ```
 
 You can even run perf though you need to know where to find it:
 
 ```bash
-./run ' /usr/lib/linux-tools/5.4.0-26-generic/perf stat ls '
+./run-docker-station ' /usr/lib/linux-tools/5.4.0-26-generic/perf stat ls '
 ```
 
 If you just want to enter in a bash shell, you can do so as well:
