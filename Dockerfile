@@ -9,7 +9,6 @@ FROM ubuntu:20.10
 
  RUN  pip3 install ipython
 
- RUN apt-get -y install
  RUN addgroup --gid $GROUP_ID user; exit 0
  RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID $USER_NAME; exit 0
  RUN echo "$USER_NAME:$USER_NAME" | chpasswd && adduser $USER_NAME sudo
