@@ -64,6 +64,9 @@ Tricks:
 - A handy command to run from time to time is `docker system prune`, as it can help you remove unneeded images.
 - If something does not work, you can try deleting all containers and images `docker rm -vf $(docker ps -a -q) ; docker rmi -f $(docker images -a -q)`. Such a reset can solve a surprising number of otherwise mysterious problems.
 
+## Memory Usage
+
+Under Windows and macOS, docker will only use relatively little memory.  You may want to allocate more: [Windows](https://docs.docker.com/docker-for-windows/#advanced) and [macOS](https://docs.docker.com/docker-for-mac/#memory).
 
 ## Requirements
 
