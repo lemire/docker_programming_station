@@ -14,6 +14,8 @@ FROM ubuntu:20.10
  RUN apt-get install -y clang++-7
  RUN apt-get install -y clang++-8
  RUN apt-get install -y clang++-9
+ RUN apt-get install -y clang++-10
+ RUN apt-get install -y clang++-11
  RUN apt-get install -y g++-7 g++-8 g++-9 g++-10
  RUN apt-get install -y ruby
 
