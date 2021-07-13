@@ -5,7 +5,7 @@ FROM ubuntu:20.10
 # We install some useful packages
  RUN apt-get update -qq
  RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata gnuplot
- RUN apt-get install -y vim valgrind golang llvm gdb lldb clang-format sudo pip python python-dev wget cmake g++ g++-9 git clang++-9 linux-tools-generic ruby ruby-dev python3-pip  libboost-all-dev r-base-dev r-recommended qpdf devscripts r-cran-remotes
+ RUN apt-get install -y vim ninja-build valgrind golang llvm gdb lldb clang-format sudo pip python python-dev wget cmake g++ g++-9 git clang++-9 linux-tools-generic ruby ruby-dev python3-pip  libboost-all-dev r-base-dev r-recommended qpdf devscripts r-cran-remotes
  RUN  pip3 install ipython
 
 # Moar compilers
