@@ -56,6 +56,7 @@ Features:
 - This works whether you have an ARM-based server or an Intel based mac.
 - The files created in the directory will be owned by you (the user).
 - I works on systems supporting Security-Enhanced Linux.
+- You have sudo access from within the container. Your password is your user ID.
 
 Caution:
 - The first time you run the script, it builds the image which is an expensive process. It is done only once, however.
