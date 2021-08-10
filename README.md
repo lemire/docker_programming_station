@@ -32,11 +32,13 @@ You can even run perf though you need to know where to find it:
 ./run-docker-station ' /usr/lib/linux-tools/5.4.0-26-generic/perf stat ls '
 ```
 
-If you just want to enter in a bash shell, you can do so as well:
+For convenience, configure you system so that `run-docker-station` is in your PATH. If you just want to enter in a bash shell with access to your current directory, you can do so:
 
 ```bash
-./run-docker-station bash
+run-docker-station bash
 ```
+
+Be mindful that the shell will only have access to the current directory and its subdirectories. You should run the script from the directory of your choosing.
 
 If you like, you can even call the script from a Makefile. It is just a regular bash
 script.
@@ -54,6 +56,7 @@ Features:
 - This works whether you have an ARM-based server or an Intel based mac.
 - The files created in the directory will be owned by you (the user).
 - I works on systems supporting Security-Enhanced Linux.
+- You have sudo access from within the container. Your password is your user ID.
 
 Caution:
 - The first time you run the script, it builds the image which is an expensive process. It is done only once, however.
