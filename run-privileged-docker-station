@@ -26,8 +26,9 @@ SSHPARAM=""
 
 docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating the container" ; docker build --no-cache -t $container_name -f $SCRIPTPATH/Dockerfile --build-arg USER_NAME="$USER"  --build-arg USER_ID=$(id -u)  --build-arg GROUP_ID=$(id -g) .  )
 
+# We run in privileged mode to have access to performance counters.
 if [ -t 0 ]; then DOCKER_ARGS=-it; fi
-docker run --rm $DOCKER_ARGS -h $container_name $SSHPARAM -v $(pwd):$(pwd):Z  -w $(pwd)  $container_name sh -c "$COMMAND"
+docker run --rm $DOCKER_ARGS -h $container_name --privileged $SSHPARAM -v $(pwd):$(pwd):Z  -w $(pwd)  $container_name sh -c "$COMMAND"
 
 
 
