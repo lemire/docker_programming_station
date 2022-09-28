@@ -19,7 +19,7 @@ FROM amazonlinux:2
  RUN echo '----->'
  RUN echo 'root:Docker!' | chpasswd
 
- RUN yum install -y  clang tzdata gnuplot vim shadow-utils ninja-build git valgrind wget gcc curl clang-tools-extra llvm gdb sudo python3-pip  python3  python3-devel wget cmake perf 
+ RUN yum install -y  clang tzdata gnuplot vim tar shadow-utils ninja-build git valgrind wget gcc curl clang-tools-extra llvm gdb sudo python3-pip  python3  python3-devel wget cmake perf 
  RUN echo python3 --version
  
  RUN  python3 -m pip install ipykernel
