@@ -18,7 +18,7 @@ RUN addgroup --gid $GROUP_ID user; exit 0
 # We install some useful packages
  
 
- RUN dnf install -y vim ninja-build clang-tools-extra valgrind curl llvm gdb  sudo gcc clang python3 python3-devel  wget cmake g++ git  python3-pip  
+ RUN dnf install -y tar vim ninja-build clang-tools-extra valgrind curl llvm gdb  sudo gcc clang python3 python3-devel  wget cmake g++ git  python3-pip  
  
  RUN  python3 -m pip install ipykernel
 
