@@ -64,7 +64,7 @@ Caution:
 
 Tricks:
 - If you put the `run-docker-station` command in your PATH, you will be able to run it from everywhere.
-- A handy command to run from time to time is `docker system prune`, as it can help you remove unneeded images.
+- A handy command to run from time to time is `docker system prune`, as it can help you remove unneeded images. I recommend running `docker image prune -a` regularly.
 - If something does not work, you can try deleting all containers and images `docker rm -vf $(docker ps -a -q) ; docker rmi -f $(docker images -a -q)`. Such a reset can solve a surprising number of otherwise mysterious problems.
 
 ## Memory Usage
