@@ -4,7 +4,7 @@ FROM multiarch/ubuntu-core:s390x-focal
  ARG GROUP_ID
  RUN apt-get update -qq
  RUN DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
- RUN apt-get install -y g++-12
+ RUN apt-get install -y g++
  RUN apt-get install -y vim sudo  cmake git 
  RUN apt-get install -y sudo
  RUN addgroup --gid $GROUP_ID user; exit 0
