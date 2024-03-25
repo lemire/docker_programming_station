@@ -10,12 +10,12 @@ RUN apt-get update && \
            build-essential cmake make python3 zlib1g wget subversion unzip ninja-build git && \
     rm -rf /var/lib/apt/lists/*
 RUN git clone --depth=1 --branch p2996  https://github.com/bloomberg/clang-p2996.git /tmp/clang-source
-RUN cmake -G "Ninja" -S /tmp/clang-source/llvm -B /tmp/clang-source/build-llvm -DCMAKE_BUILD_TYPE=Release \
+RUN cmake -S /tmp/clang-source/llvm -B /tmp/clang-source/build-llvm -DCMAKE_BUILD_TYPE=Release \
     -DLLVM_ENABLE_ASSERTIONS=ON \
     -DLLVM_UNREACHABLE_OPTIMIZE=ON \
     -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
     -DLLVM_ENABLE_PROJECTS=clang
-RUN cmake --build /tmp/clang-source/build-llvm -j
+RUN cmake --build /tmp/clang-source/build-llvm 
 RUN cmake --install /tmp/clang-source/build-llvm --prefix /tmp/clang-install
 
 
