@@ -28,3 +28,11 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 # Copy build results of stage 1 to /usr/local.
 COPY --from=builder /tmp/clang-install/ /usr/local/
+
+# Setting up the "LD_LIBRARY_PATH" 
+RUN export LD_LIBRARY_PATH=/usr/local/lib/aarch64-unknown-linux-gnu:$LD_LIBRARY_PATH
+
+# Creating symbolic links for version-specific naming
+RUN ln -s /usr/local/lib/aarch64-unknown-linux-gnu/libc++.so.1.0 /usr/local/lib/aarch64-unknown-linux-gnu/libc++.so.1 && \
+    ln -s /usr/local/lib/aarch64-unknown-linux-gnu/libc++abi.so.1.0 /usr/local/lib/aarch64-unknown-linux-gnu/libc++abi.so.1 && \
+    ln -s /usr/local/lib/aarch64-unknown-linux-gnu/libunwind.so.1.0 /usr/local/lib/aarch64-unknown-linux-gnu/libunwind.so.1
