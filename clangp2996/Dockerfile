@@ -15,8 +15,8 @@ RUN cmake -S /tmp/clang-source/llvm -B /tmp/clang-source/build-llvm -DCMAKE_BUIL
     -DLLVM_UNREACHABLE_OPTIMIZE=ON \
     -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
     -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
-    -DLLVM_ENABLE_PROJECTS=clang
-RUN cmake --build /tmp/clang-source/build-llvm 
+    -DLLVM_ENABLE_PROJECTS=clang -G Ninja
+RUN cmake --build /tmp/clang-source/build-llvm -j
 RUN cmake --install /tmp/clang-source/build-llvm --prefix /tmp/clang-install
 
 
