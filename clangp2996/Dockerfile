@@ -29,3 +29,5 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 # Copy build results of stage 1 to /usr/local.
 COPY --from=builder /tmp/clang-install/ /usr/local/
+RUN P=`/usr/local/bin/clang++ -v 2>&1 | grep Target | cut -d' ' -f2-`; echo /usr/local/lib/$P > /etc/ld.so.conf.d/$P.conf
+RUN ldconfig
