@@ -2,10 +2,8 @@ FROM gentoo/stage3:latest
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID
-# We install some useful packages
-# RUN dnf check-update
  RUN emerge --sync
- RUN emerge sys-devel/gcc sys-devel/clang dev-build/cmake 
+ RUN emerge -g sys-devel/gcc sys-devel/clang dev-build/cmake 
  RUN echo USER_ID $USER_ID
  RUN echo GROUP_ID $GROUP_ID
  RUN addgroup --gid $GROUP_ID user; exit 0
