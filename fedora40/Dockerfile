@@ -1,4 +1,4 @@
-FROM fedora:rawhide
+FROM fedora:40
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID
