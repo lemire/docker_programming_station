@@ -4,7 +4,7 @@ FROM fedora:40
  ARG GROUP_ID
 # We install some useful packages
 # RUN dnf check-update
- RUN dnf install -y vim cmake g++ clang git diffutils redhat-rpm-config
+ RUN dnf install -y vim libubsan cmake g++ clang git diffutils redhat-rpm-config
  RUN echo USER_ID $USER_ID
  RUN echo GROUP_ID $GROUP_ID
  RUN addgroup --gid $GROUP_ID user; exit 0
