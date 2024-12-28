@@ -1,10 +1,10 @@
-FROM ubuntu:24.04
+FROM ubuntu:24.10
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID
 # We install some useful packages
  RUN apt-get update -qq
- RUN apt-get install -y vim git g++-riscv64-linux-gnu qemu-user-static ninja-build valgrind curl  clang++-18 gdb clang-format sudo  wget cmake g++
+ RUN apt-get install -y vim ninja-build valgrind curl llvm gdb clang-format sudo python3 python3-dev wget cmake g++ g++-13 libcurl4-openssl-dev libicu-dev clang-15 clang libboost-all-dev git  linux-tools-generic hyperfine
  RUN addgroup --gid $GROUP_ID user; exit 0
  RUN adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID $USER_NAME; exit 0
  RUN echo "$USER_NAME:$USER_NAME" | chpasswd && adduser $USER_NAME sudo
