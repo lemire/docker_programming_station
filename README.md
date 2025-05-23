@@ -76,4 +76,12 @@ Under Windows and macOS, docker will only use relatively little memory.  You may
 - A working docker installation under Linux, macOS or related system.
 - Bash
 
+## QEMU
 
+Consider running
+
+```
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+```
+
+for the qemu images.

@@ -1,4 +1,4 @@
-FROM multiarch/ubuntu-core:ppc64el-focal
+FROM multiarch/ubuntu-core:ppc64el-hirsute
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID
