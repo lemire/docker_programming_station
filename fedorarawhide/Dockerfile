@@ -4,7 +4,7 @@ FROM fedora:rawhide
  ARG GROUP_ID
 # We install some useful packages
 # RUN dnf check-update
- RUN dnf install -y vim cmake g++ clang git diffutils libasan libubsan
+ RUN dnf install -y vim cmake g++ gdb perf clang git diffutils libasan libubsan
  RUN echo USER_ID $USER_ID
  RUN echo GROUP_ID $GROUP_ID
  RUN addgroup --gid $GROUP_ID user; exit 0
