@@ -1,11 +1,10 @@
-FROM --platform=linux/arm64 ubuntu:24.04
+FROM --platform=linux/arm64 ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        software-properties-common \
         build-essential \
-        gcc-14 g++-14 \
-        gcc-14-aarch64-linux-gnu g++-14-aarch64-linux-gnu \
         clang \
         qemu-user \
         qemu-user-static \
@@ -13,6 +12,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         make cmake ninja-build \
         git ca-certificates \
         vim less \
+    && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gcc-16 g++-16 \
+        gcc-16-aarch64-linux-gnu g++-16-aarch64-linux-gnu \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-16 160 \
+    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-16 160 \
+    && update-alternatives --install /usr/bin/aarch64-linux-gnu-gcc aarch64-linux-gnu-gcc /usr/bin/aarch64-linux-gnu-gcc-16 160 \
+    && update-alternatives --install /usr/bin/aarch64-linux-gnu-g++ aarch64-linux-gnu-g++ /usr/bin/aarch64-linux-gnu-g++-16 160 \
     && rm -rf /var/lib/apt/lists/*
 
 # Convenience wrappers so you can just "run-sve ./a.out"
