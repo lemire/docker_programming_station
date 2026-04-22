@@ -28,4 +28,6 @@ docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating th
 
 # We run in privileged mode to have access to performance counters.
 if [ -t 0 ]; then DOCKER_ARGS=-it; fi
-docker run --rm $DOCKER_ARGS -h $container_name --privileged $SSHPARAM -v $(pwd):$(pwd):Z  -w $(pwd)  $container_name sh -c "$COMMAND"
+USERNS_ARG=""
+if docker version 2>/dev/null | grep -qi podman; then USERNS_ARG="--userns=keep-id"; fi
+docker run --rm $DOCKER_ARGS $USERNS_ARG -h $container_name --privileged $SSHPARAM -v $(pwd):$(pwd):z  -w $(pwd)  $container_name sh -c "$COMMAND"
