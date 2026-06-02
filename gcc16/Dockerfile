@@ -1,4 +1,4 @@
-FROM sourcemation/gcc-16
+FROM gcc:16
 ARG USER_NAME
 ARG USER_ID
 ARG GROUP_ID

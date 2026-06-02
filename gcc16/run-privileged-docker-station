@@ -24,7 +24,7 @@ SSHPARAM=""
 [ -e "${HOME}/.ssh" ] && SSHPARAM="--volume ${HOME}/.ssh:/home/$tuser/.ssh:ro"  
 
 
-docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating the container" ; docker build --no-cache --platform linux/amd64 -t $container_name -f $SCRIPTPATH/Dockerfile --build-arg USER_NAME="$tuser"  --build-arg USER_ID=$(id -u)  --build-arg GROUP_ID=$(id -g) .  )
+docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating the container" ; docker build --no-cache -t $container_name -f $SCRIPTPATH/Dockerfile --build-arg USER_NAME="$tuser"  --build-arg USER_ID=$(id -u)  --build-arg GROUP_ID=$(id -g) .  )
 
 # We run in privileged mode to have access to performance counters.
 if [ -t 0 ]; then DOCKER_ARGS=-it; fi
