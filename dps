@@ -1,0 +1,252 @@
+#!/usr/bin/env bash
+#
+# dps - docker programming station
+#
+# One command to build, run and manage every station in this repository.
+# Put it in your PATH and call it from any directory:
+#
+#     dps run --img devuan 'gcc --version'
+#     dps shell --img alpine
+#     dps list
+#     dps delete --img devuan
+#
+# The station sees only the directory you run from (mounted at the same path),
+# and the files it creates belong to you.
+
+set -o pipefail
+
+SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+PROGNAME="$(basename "$0")"
+
+tuser=$(echo "$USER" | tr -dc 'a-z')
+DEFAULT_IMG="${DPS_IMG:-ubuntu22}"
+
+# ---------------------------------------------------------------------------
+# helpers
+
+die() { echo "$PROGNAME: $*" >&2; exit 1; }
+
+# A station is any subdirectory holding a Dockerfile.
+stations() {
+  local d
+  for d in "$SCRIPTPATH"/*/Dockerfile; do
+    [ -e "$d" ] || continue
+    basename "$(dirname "$d")"
+  done | sort
+}
+
+station_exists() { [ -f "$SCRIPTPATH/$1/Dockerfile" ]; }
+
+image_name() { echo "${CONTAINER_NAME:-$1-programming_station-for-$tuser}"; }
+
+have_docker() {
+  command -v docker >/dev/null 2>&1 || die "docker not found. Install Docker, or Podman with a docker shim."
+  docker info >/dev/null 2>&1 || die "the container engine is not running. Try 'docker info'."
+}
+
+image_built() { docker image inspect "$(image_name "$1")" >/dev/null 2>&1; }
+
+# Rootless podman maps your uid to root inside the container, so a station that
+# runs as your own uid could not write to the mounted directory. keep-id
+# restores the mapping; it is rejected by rootful podman, hence the guard.
+userns_arg() {
+  if docker version 2>/dev/null | grep -qi podman; then
+    if [ "$(docker info --format '{{.Host.Security.Rootless}}' 2>/dev/null)" = "true" ]; then
+      echo "--userns=keep-id"
+    fi
+  fi
+}
+
+# Stations that target another architecture need QEMU binfmt handlers. Probe by
+# running a real binary rather than trusting image metadata, then defer to the
+# station's own script, which prints the full explanation.
+EMULATED_STATIONS=" armhf ppc64 s390 sve2 "
+needs_emulation() { [[ "$EMULATED_STATIONS" == *" $1 "* ]]; }
+
+build_image() {
+  local img="$1" name
+  name="$(image_name "$img")"
+  echo "building $name (this happens once)" >&2
+  docker build -t "$name" -f "$SCRIPTPATH/$img/Dockerfile" \
+    --build-arg USER_NAME="$tuser" \
+    --build-arg USER_ID="$(id -u)" \
+    --build-arg GROUP_ID="$(id -g)" \
+    "$SCRIPTPATH/$img" || die "build of $img failed"
+}
+
+# ---------------------------------------------------------------------------
+# commands
+
+cmd_list() {
+  have_docker 2>/dev/null || true
+  printf "%-18s %-9s %s\n" "STATION" "BUILT" "BASE IMAGE"
+  local s base built
+  for s in $(stations); do
+    base=$(grep -m1 -E '^ *FROM' "$SCRIPTPATH/$s/Dockerfile" \
+           | sed -E 's/^ *FROM +(--platform=[^ ]+ +)?([^ ]+).*/\2/')
+    if docker image inspect "$(image_name "$s")" >/dev/null 2>&1; then built="yes"; else built="-"; fi
+    printf "%-18s %-9s %s\n" "$s" "$built" "$base"
+  done
+}
+
+cmd_run() {
+  local img="$1"; shift
+  [ $# -gt 0 ] || die "run needs a command. Try: $PROGNAME run --img $img 'gcc --version'"
+  have_docker
+  station_exists "$img" || die "unknown station '$img'. Try '$PROGNAME list'."
+
+  # The emulated stations carry their own preflight and error messages.
+  if needs_emulation "$img"; then
+    CONTAINER_NAME="$(image_name "$img")" exec "$SCRIPTPATH/$img/run-docker-station" "$@"
+  fi
+
+  image_built "$img" || build_image "$img"
+
+  local sshparam=() docker_args=()
+  [ -e "${SSH_AUTH_SOCK}" ] && sshparam=(--volume /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock --env SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock)
+  [ -e "${HOME}/.ssh" ] && sshparam=(--volume "${HOME}/.ssh:/home/$tuser/.ssh:ro")
+  [ -t 0 ] && docker_args=(-it)
+
+  local name; name="$(image_name "$img")"
+  # shellcheck disable=SC2046
+  exec docker run --rm "${docker_args[@]}" $(userns_arg) -h "$name" \
+    "${sshparam[@]}" -v "$(pwd):$(pwd):z" -w "$(pwd)" "$name" sh -c "$*"
+}
+
+cmd_shell() {
+  local img="$1"
+  cmd_run "$img" bash
+}
+
+cmd_build() {
+  local img="$1"
+  have_docker
+  station_exists "$img" || die "unknown station '$img'. Try '$PROGNAME list'."
+  build_image "$img"
+  echo "built $(image_name "$img")"
+}
+
+cmd_rebuild() {
+  local img="$1"
+  have_docker
+  station_exists "$img" || die "unknown station '$img'. Try '$PROGNAME list'."
+  docker image rm -f "$(image_name "$img")" >/dev/null 2>&1
+  build_image "$img"
+  echo "rebuilt $(image_name "$img")"
+}
+
+cmd_delete() {
+  local img="$1" name
+  have_docker
+  station_exists "$img" || die "unknown station '$img'. Try '$PROGNAME list'."
+  name="$(image_name "$img")"
+  docker ps -a --filter "ancestor=$name" -q | while read -r c; do
+    [ -n "$c" ] && docker rm -f "$c" >/dev/null 2>&1
+  done
+  if docker image rm "$name" >/dev/null 2>&1; then
+    echo "removed $name"
+  else
+    echo "$name was not built"
+  fi
+}
+
+cmd_clean() {
+  have_docker
+  local s name removed=0
+  for s in $(stations); do
+    name="$(image_name "$s")"
+    if docker image inspect "$name" >/dev/null 2>&1; then
+      docker ps -a --filter "ancestor=$name" -q | while read -r c; do
+        [ -n "$c" ] && docker rm -f "$c" >/dev/null 2>&1
+      done
+      docker image rm "$name" >/dev/null 2>&1 && { echo "removed $name"; removed=$((removed+1)); }
+    fi
+  done
+  [ "$removed" -eq 0 ] && echo "nothing to remove"
+  return 0
+}
+
+cmd_info() {
+  local img="$1"
+  station_exists "$img" || die "unknown station '$img'. Try '$PROGNAME list'."
+  echo "station:    $img"
+  echo "image:      $(image_name "$img")"
+  echo "dockerfile: $SCRIPTPATH/$img/Dockerfile"
+  echo "base:       $(grep -m1 -E '^ *FROM' "$SCRIPTPATH/$img/Dockerfile" | sed -E 's/^ *FROM +//')"
+  if docker image inspect "$(image_name "$img")" >/dev/null 2>&1; then
+    echo "built:      yes ($(docker image inspect "$(image_name "$img")" --format '{{.Size}}' | awk '{printf "%.1f GB", $1/1024/1024/1024}'))"
+  else
+    echo "built:      no"
+  fi
+  [ -f "$SCRIPTPATH/$img/README.md" ] && { echo; sed -n '3,8p' "$SCRIPTPATH/$img/README.md"; }
+  return 0
+}
+
+usage() {
+  cat <<EOF
+$PROGNAME - docker programming station
+
+Usage: $PROGNAME <command> [--img STATION] [arguments]
+
+Commands:
+  run --img STATION CMD...   run CMD inside STATION, in the current directory
+  shell --img STATION        open an interactive shell in STATION
+  list                       list every station and whether it is built
+  info --img STATION         show details for one station
+  build --img STATION        build a station's image without running anything
+  rebuild --img STATION      discard the image and build it again
+  delete --img STATION       remove a station's image and containers
+  clean                      remove every station image built for you
+  help                       this message
+
+The station defaults to '$DEFAULT_IMG'; set DPS_IMG to change that, or pass
+--img. A bare station name also works as shorthand:
+
+  $PROGNAME run --img alpine 'gcc --version'
+  $PROGNAME alpine 'gcc --version'
+  $PROGNAME shell --img fedora44
+  $PROGNAME list
+
+Only the directory you run from is visible inside the station, and files it
+creates belong to you.
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# argument parsing
+
+[ $# -eq 0 ] && { usage; exit 0; }
+
+COMMAND=""
+IMG="$DEFAULT_IMG"
+ARGS=()
+
+# A bare station name as the first word is shorthand for "run --img NAME".
+if station_exists "$1"; then
+  COMMAND="run"; IMG="$1"; shift
+else
+  COMMAND="$1"; shift
+fi
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --img|-i)   [ -n "$2" ] || die "--img needs a station name"; IMG="$2"; shift 2 ;;
+    --img=*)    IMG="${1#*=}"; shift ;;
+    -h|--help)  usage; exit 0 ;;
+    --)         shift; ARGS+=("$@"); break ;;
+    *)          ARGS+=("$1"); shift ;;
+  esac
+done
+
+case "$COMMAND" in
+  run)             cmd_run "$IMG" "${ARGS[@]}" ;;
+  shell|sh|bash)   cmd_shell "$IMG" ;;
+  list|ls)         cmd_list ;;
+  info)            cmd_info "$IMG" ;;
+  build)           cmd_build "$IMG" ;;
+  rebuild)         cmd_rebuild "$IMG" ;;
+  delete|rm|remove) cmd_delete "$IMG" ;;
+  clean|prune)     cmd_clean ;;
+  help|-h|--help)  usage ;;
+  *)               die "unknown command '$COMMAND'. Try '$PROGNAME help'." ;;
+esac

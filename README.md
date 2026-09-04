@@ -67,6 +67,31 @@ Tricks:
 - A handy command to run from time to time is `docker system prune`, as it can help you remove unneeded images. I recommend running `docker image prune -a` regularly.
 - If something does not work, you can try deleting all containers and images `docker rm -vf $(docker ps -a -q) ; docker rmi -f $(docker images -a -q)`. Such a reset can solve a surprising number of otherwise mysterious problems.
 
+## The dps command
+
+`dps` drives every station from one place. Put it in your `PATH` and call it
+from whatever directory you want to work in:
+
+```bash
+dps run --img devuan 'gcc --version'   # run a command in a station
+dps devuan 'gcc --version'             # same thing, shorthand
+dps shell --img fedora44               # interactive shell
+dps list                               # every station, and whether it is built
+dps info --img alpine                  # base image, size, what it is for
+dps build --img rocky10                # build without running anything
+dps rebuild --img fedorarawhide        # discard the image and build it again
+dps delete --img devuan                # remove one station's image
+dps clean                              # remove every station image
+```
+
+The image is built the first time you use a station and cached afterwards. As
+with the individual scripts, the station sees only the directory you invoke it
+from, and the files it creates belong to you.
+
+The default station is `ubuntu22`; set `DPS_IMG` to change it. The per-station
+`run-docker-station` scripts still work exactly as before, and `dps` defers to
+them for the emulated stations so you get their QEMU diagnostics.
+
 ## The containers
 
 Each subdirectory is a self-contained station with its own `Dockerfile` and its
@@ -91,12 +116,21 @@ top-level `Dockerfile` (used by `rds`) is a copy of `ubuntu22`.
 | Directory | Base | Compilers | Why you would use it |
 |---|---|---|---|
 | [debian12](debian12) | Debian 12 | GCC 12.2, clang 14 | Conservative, long-lived server toolchain |
+| [debian13](debian13) | Debian 13 | GCC 14.2, clang 19 | Current Debian stable |
+| [devuan](devuan) | Devuan 6 | GCC 14.2, clang 19 | **Debian without systemd** |
+| [rocky10](rocky10) | Rocky Linux 10 | GCC 14.3, clang 21 | **RHEL 10 rebuild**: the enterprise target |
 | [fedora38](fedora38) | Fedora 38 | GCC 13.2, clang 16 | Pinned Fedora, for bisecting compiler changes |
 | [fedora39](fedora39) | Fedora 39 | GCC 13.3, clang 17 | Pinned Fedora |
 | [fedora40](fedora40) | Fedora 40 | GCC 14.2, clang 18 | Pinned Fedora |
+| [fedora43](fedora43) | Fedora 43 | GCC 15.3, clang 21 | Current Fedora |
+| [fedora44](fedora44) | Fedora 44 | GCC 16.2, clang 22 | Current Fedora |
 | [fedorarawhide](fedorarawhide) | Fedora Rawhide | GCC 16, clang 22 | Earliest warning of future compiler behaviour |
 | [alpine](alpine) | Alpine 3.24 | GCC 15.2 | **musl libc** instead of glibc; busybox userland |
 | [gentoo](gentoo) | Gentoo stage3 | GCC 15.3 | Source-based distribution, different layout |
+| [voidlinux](voidlinux) | Void Linux | GCC 14.2, clang 21 | Independent lineage, xbps, runit |
+| [artix](artix) | Artix Linux | GCC 16.2, clang 22 | **Arch without systemd**; very current packages |
+| [openmandriva](openmandriva) | OpenMandriva Cooker | clang 23, GCC 16 | **A distribution built with clang** |
+| [slackware](slackware) | Slackware 15.0 | GCC 11.2 | The oldest surviving distribution; no dependency resolution |
 
 ### Newest compilers
 
