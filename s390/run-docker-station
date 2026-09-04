@@ -19,6 +19,80 @@ command -v docker >/dev/null 2>&1 || { echo >&2 "Please install docker. E.g., go
 
 docker info >/dev/null 2>&1 || { echo >&2 "Docker server is not running? type 'docker info'."; exit 1; }
 
+
+# ---------------------------------------------------------------------------
+# QEMU preflight.
+#
+# This station targets IBM Z (s390x). On a host of a different architecture, every
+# command inside it runs under QEMU, which needs binfmt handlers registered in
+# the kernel. Without them the failure surfaces deep inside the build as
+# "exec format error", which says nothing about the real cause -- so probe for
+# it here and explain what to do.
+#
+# The probe runs a real binary from the target image rather than inspecting
+# image metadata: the multiarch/* base images declare themselves as amd64 even
+# though they hold foreign-arch binaries, so metadata cannot be trusted.
+PROBE_PLATFORM=""
+PROBE_IMAGE="multiarch/ubuntu-core:s390x-focal"
+
+PROBE_TARGET="$container_name"
+docker image inspect "$container_name" >/dev/null 2>&1 || PROBE_TARGET="$PROBE_IMAGE"
+
+if ! docker run --rm $PROBE_PLATFORM "$PROBE_TARGET" /bin/true >/dev/null 2>&1; then
+  if docker version 2>/dev/null | grep -qi podman; then
+    REGISTER_CMD="sudo podman run --rm --privileged docker.io/multiarch/qemu-user-static --reset -p yes"
+  else
+    REGISTER_CMD="docker run --rm --privileged multiarch/qemu-user-static --reset -p yes"
+  fi
+  cat >&2 <<EOF
+
+ERROR: this station targets IBM Z (s390x), but this host cannot execute those
+       binaries. QEMU binfmt handlers do not appear to be registered.
+
+Register them, then run this command again:
+
+    $REGISTER_CMD
+
+EOF
+  if docker version 2>/dev/null | grep -qi podman; then
+    cat >&2 <<'EOF'
+Note the "sudo": you are using podman, and binfmt_misc is global kernel state
+that a rootless container cannot touch. Run rootless, that command prints a
+long list of "Setting ... as binfmt interpreter" lines and exits successfully
+while registering nothing at all -- which is the confusing part, so check with
+this script rather than trusting its output.
+
+The "-p yes" flag matters too: it loads the qemu interpreters into the kernel,
+so rootless containers can use them afterwards.
+
+RHEL-family 10 (Rocky, Alma) ships no qemu-user-static package -- not in
+BaseOS, AppStream, Extras or EPEL -- so the command above is the route there.
+On Fedora you may instead install the package directly:
+
+    sudo dnf install qemu-user-static
+
+EOF
+  else
+    cat >&2 <<'EOF'
+On macOS (Docker Desktop, OrbStack) the virtual machine provides emulation and
+this check should normally pass; if it does not, restart the VM.
+
+On Linux you can also install the handlers from your distribution:
+
+    sudo apt install qemu-user-static binfmt-support   # Debian / Ubuntu
+    sudo dnf install qemu-user-static                  # Fedora
+
+EOF
+  fi
+  cat >&2 <<'EOF'
+Registrations made this way do not survive a reboot; re-run the command after
+restarting the machine.
+
+EOF
+  exit 1
+fi
+# ---------------------------------------------------------------------------
+
 SSHPARAM=""
 [ -e "${SSH_AUTH_SOCK}" ] && SSHPARAM="--volume /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock  --env SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock"
 [ -e "${HOME}/.ssh" ] && SSHPARAM="--volume ${HOME}/.ssh:/home/$tuser/.ssh:ro"  
@@ -26,7 +100,17 @@ SSHPARAM=""
 
 docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating the container" ; docker build --no-cache -t $container_name -f $SCRIPTPATH/Dockerfile --build-arg USER_NAME="$tuser"  --build-arg USER_ID=$(id -u)  --build-arg GROUP_ID=$(id -g) .  )
 if [ -t 0 ]; then DOCKER_ARGS=-it; fi
-docker run --rm --privileged multiarch/qemu-user-static:register --reset && docker run --rm $DOCKER_ARGS -h $container_name $SSHPARAM -v $(pwd):$(pwd):Z  -w $(pwd)  $container_name sh -c "$COMMAND"
+USERNS_ARG=""
+if docker version 2>/dev/null | grep -qi podman; then
+  # Rootless podman maps your uid to root inside the container, so a container
+  # that runs as your own uid cannot write to the mounted directory at all.
+  # --userns=keep-id restores the mapping. It is rootless-only: rootful podman
+  # rejects the flag, so only add it when we are actually rootless.
+  if [ "$(docker info --format '{{.Host.Security.Rootless}}' 2>/dev/null)" = "true" ]; then
+    USERNS_ARG="--userns=keep-id"
+  fi
+fi
+docker run --rm $DOCKER_ARGS $USERNS_ARG -h $container_name $SSHPARAM -v $(pwd):$(pwd):z  -w $(pwd)  $container_name sh -c "$COMMAND"
 
 
 

@@ -29,5 +29,13 @@ docker image inspect $container_name >/dev/null 2>&1 || ( echo "instantiating th
 # We run in privileged mode to have access to performance counters.
 if [ -t 0 ]; then DOCKER_ARGS=-it; fi
 USERNS_ARG=""
-if docker version 2>/dev/null | grep -qi podman; then USERNS_ARG="--userns=keep-id"; fi
+if docker version 2>/dev/null | grep -qi podman; then
+  # Rootless podman maps your uid to root inside the container, so a container
+  # that runs as your own uid cannot write to the mounted directory at all.
+  # --userns=keep-id restores the mapping. It is rootless-only: rootful podman
+  # rejects the flag, so only add it when we are actually rootless.
+  if [ "$(docker info --format '{{.Host.Security.Rootless}}' 2>/dev/null)" = "true" ]; then
+    USERNS_ARG="--userns=keep-id"
+  fi
+fi
 docker run --rm $DOCKER_ARGS $USERNS_ARG -h $container_name --privileged $SSHPARAM -v $(pwd):$(pwd):z  -w $(pwd)  $container_name sh -c "$COMMAND"

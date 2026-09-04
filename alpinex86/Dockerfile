@@ -1,4 +1,4 @@
-FROM i386/alpine:3.24
+FROM --platform=linux/386 i386/alpine:3.24
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID
@@ -8,7 +8,9 @@ FROM i386/alpine:3.24
  RUN echo USER_ID $USER_ID
  RUN echo GROUP_ID $GROUP_ID
  RUN addgroup --gid $GROUP_ID user; exit 0
- RUN adduser -D -g '' -u $USER_ID -g $GROUP_ID $USER_NAME
+ # -G binds the user to the existing group for $GROUP_ID; without it busybox
+ # adduser tries to create a group numbered like the uid and collides.
+ RUN adduser -D -g '' -u $USER_ID -G "$(getent group $GROUP_ID | cut -d: -f1)" $USER_NAME
  RUN adduser $USER_NAME wheel
  RUN echo "$USER_NAME:$USER_NAME" | chpasswd 
  RUN apk add doas

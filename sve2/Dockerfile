@@ -7,13 +7,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         clang \
         qemu-user \
-        qemu-user-static \
         gdb-multiarch \
         make cmake ninja-build \
         git ca-certificates \
         vim less \
-    && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && apt-get update \
     && apt-get install -y --no-install-recommends \
         gcc-16 g++-16 \
         gcc-16-aarch64-linux-gnu g++-16-aarch64-linux-gnu \
