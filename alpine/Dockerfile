@@ -1,4 +1,4 @@
-FROM alpine:3.19
+FROM alpine:3.24
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID
@@ -9,7 +9,7 @@ FROM alpine:3.19
  RUN echo USER_ID $USER_ID
  RUN echo GROUP_ID $GROUP_ID
  RUN addgroup --gid $GROUP_ID user; exit 0
- RUN adduser -D -g '' -S -u $USER_ID -g $GROUP_ID --ingroup "user" $USER_NAME --disabled-password
+ RUN adduser -D -g '' -S -u $USER_ID --ingroup "$(getent group $GROUP_ID | cut -d: -f1)" $USER_NAME --disabled-password
  RUN adduser $USER_NAME wheel
  RUN echo "$USER_NAME:$USER_NAME" | chpasswd 
  RUN apk add doas

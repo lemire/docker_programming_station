@@ -1,4 +1,4 @@
-FROM multiarch/alpine:x86-edge
+FROM i386/alpine:3.24
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID
