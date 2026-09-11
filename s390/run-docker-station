@@ -30,10 +30,11 @@ docker info >/dev/null 2>&1 || { echo >&2 "Docker server is not running? type 'd
 # it here and explain what to do.
 #
 # The probe runs a real binary from the target image rather than inspecting
-# image metadata: the multiarch/* base images declare themselves as amd64 even
-# though they hold foreign-arch binaries, so metadata cannot be trusted.
-PROBE_PLATFORM=""
-PROBE_IMAGE="multiarch/ubuntu-core:s390x-focal"
+# image metadata: only an actual exec tells us whether the kernel can run
+# foreign binaries, and the image is pulled for the target platform explicitly
+# so the probe cannot silently fall back to a native variant.
+PROBE_PLATFORM="--platform linux/s390x"
+PROBE_IMAGE="ubuntu:26.04"
 
 PROBE_TARGET="$container_name"
 docker image inspect "$container_name" >/dev/null 2>&1 || PROBE_TARGET="$PROBE_IMAGE"
@@ -110,7 +111,7 @@ if docker version 2>/dev/null | grep -qi podman; then
     USERNS_ARG="--userns=keep-id"
   fi
 fi
-docker run --rm $DOCKER_ARGS $USERNS_ARG -h $container_name $SSHPARAM -v $(pwd):$(pwd):z  -w $(pwd)  $container_name sh -c "$COMMAND"
+docker run --rm $PROBE_PLATFORM $DOCKER_ARGS $USERNS_ARG -h $container_name $SSHPARAM -v $(pwd):$(pwd):z  -w $(pwd)  $container_name sh -c "$COMMAND"
 
 
 

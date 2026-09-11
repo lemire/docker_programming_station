@@ -22,9 +22,9 @@ git and vim.
 
 ## Notes
 
-Ubuntu 22.04 LTS is the **default** station: the Dockerfile at the top of this
-repository is a copy of this one, and the `rds` script uses it. When in doubt,
-start here.
+Ubuntu 22.04 LTS, supported until 2027. It was the default station until the
+top-level Dockerfile moved to `ubuntu26`; it remains the release most servers
+still run, so it is a good second target after the default.
 
 ## Usage
 

@@ -1,7 +1,7 @@
 # armhf
 
 A **32-bit ARM** (armv7l, hard-float) programming station, based on
-**Ubuntu 20.04**.
+**Ubuntu 26.04**.
 
 Useful for testing 32-bit ARM code paths: NEON intrinsics under AArch32,
 unaligned access behaviour, `long` being 32 bits, and the ABI differences
@@ -12,8 +12,8 @@ between AArch32 and AArch64. Together with `alpinex86` it covers the two
 
 | Tool | Version (at time of writing) |
 |---|---|
-| gcc / g++ | 9.4.0 |
-| cmake | 3.16.3 |
+| gcc / g++ | 15.2.0 |
+| cmake | 4.2.3 |
 
 Also: git, vim, sudo.
 

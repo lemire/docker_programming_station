@@ -1,4 +1,4 @@
-FROM --platform=linux/arm64 ubuntu:latest
+FROM --platform=linux/arm64 ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 

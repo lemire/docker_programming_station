@@ -88,7 +88,7 @@ The image is built the first time you use a station and cached afterwards. As
 with the individual scripts, the station sees only the directory you invoke it
 from, and the files it creates belong to you.
 
-The default station is `ubuntu22`; set `DPS_IMG` to change it. The per-station
+The default station is `ubuntu26`; set `DPS_IMG` to change it. The per-station
 `run-docker-station` scripts still work exactly as before, and `dps` defers to
 them for the emulated stations so you get their QEMU diagnostics.
 
@@ -96,7 +96,7 @@ them for the emulated stations so you get their QEMU diagnostics.
 
 Each subdirectory is a self-contained station with its own `Dockerfile` and its
 own `run-docker-station` script, and its own `README.md` with more detail. The
-top-level `Dockerfile` (used by `rds`) is a copy of `ubuntu22`.
+top-level `Dockerfile` (used by `rds`) is a copy of `ubuntu26`.
 
 ### Ubuntu releases
 
@@ -105,11 +105,11 @@ top-level `Dockerfile` (used by `rds`) is a copy of `ubuntu22`.
 | [ubuntu16](ubuntu16) | Ubuntu 16.04 | GCC 5.5 (and 8) | Oldest toolchain here; C++11/14 baseline |
 | [ubuntu18](ubuntu18) | Ubuntu 18.04 | GCC 7.5 | First reasonable C++17 support |
 | [ubuntu20](ubuntu20) | Ubuntu 20.04 | GCC 7-10, clang 6-11 | The compiler zoo; also Go, Ruby, R, ipython |
-| [ubuntu22](ubuntu22) | Ubuntu 22.04 LTS | GCC 11.4, clang 14 | **The default station** |
+| [ubuntu22](ubuntu22) | Ubuntu 22.04 LTS | GCC 11.4, clang 14 | Previous default; still widely deployed |
 | [ubuntu23](ubuntu23) | Ubuntu 23.10 | GCC 13.2, clang 16 | EOL interim release, pinned to old-releases |
 | [ubuntu24](ubuntu24) | Ubuntu 24.04 LTS | GCC 13.3, clang 18 | Current widely deployed LTS |
 | [ubuntu25](ubuntu25) | Ubuntu 25.04 | GCC 14.2, clang 20 | Interim release |
-| [ubuntu26](ubuntu26) | Ubuntu 26.04 LTS | GCC 15.2, clang 21 | Newest LTS |
+| [ubuntu26](ubuntu26) | Ubuntu 26.04 LTS | GCC 15.2, clang 21 | Newest LTS; **the default station** |
 
 ### Other distributions
 
@@ -149,9 +149,9 @@ These let you find portability bugs without owning the hardware. All except
 
 | Directory | Target | Why you would use it |
 |---|---|---|
-| [s390](s390) | s390x, Ubuntu 20.04 | **Big-endian.** The one target that finds endianness bugs |
-| [ppc64](ppc64) | ppc64le, Ubuntu 20.04 | POWER: VSX vectors, weak memory model, 128-byte cache lines |
-| [armhf](armhf) | armv7l, Ubuntu 20.04 | **32-bit ARM**: AArch32 NEON, 32-bit `long` |
+| [s390](s390) | s390x, Ubuntu 26.04 | **Big-endian.** The one target that finds endianness bugs |
+| [ppc64](ppc64) | ppc64le, Ubuntu 26.04 | POWER: VSX vectors, weak memory model, 128-byte cache lines |
+| [armhf](armhf) | armv7l, Ubuntu 26.04 | **32-bit ARM**: AArch32 NEON, 32-bit `long` |
 | [alpinex86](alpinex86) | i386, Alpine 3.24 | **32-bit x86**: 4-byte pointers, `size_t` truncation. Native on x86-64 |
 | [riscv](riscv) | RISC-V cross + QEMU | Cross-compile to RISC-V and run under emulation |
 | [sve2](sve2) | arm64, Ubuntu 26.04 | **ARM SVE/SVE2** at 128/256/512-bit vector lengths |

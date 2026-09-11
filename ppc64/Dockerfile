@@ -1,4 +1,4 @@
-FROM multiarch/ubuntu-core:ppc64el-focal
+FROM --platform=linux/ppc64le ubuntu:26.04
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID

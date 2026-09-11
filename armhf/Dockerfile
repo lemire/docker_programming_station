@@ -1,4 +1,4 @@
-FROM multiarch/ubuntu-core:armhf-focal
+FROM --platform=linux/arm/v7 ubuntu:26.04
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID

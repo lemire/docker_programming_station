@@ -1,4 +1,4 @@
-FROM multiarch/ubuntu-core:s390x-focal
+FROM --platform=linux/s390x ubuntu:26.04
  ARG USER_NAME
  ARG USER_ID
  ARG GROUP_ID

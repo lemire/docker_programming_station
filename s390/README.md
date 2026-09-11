@@ -1,7 +1,7 @@
 # s390
 
 A **big-endian** programming station: IBM z/Architecture (s390x) on
-**Ubuntu 20.04**.
+**Ubuntu 26.04**.
 
 This is the most valuable container in the repository for correctness testing,
 because s390x is the only widely available **big-endian** Linux target left.
@@ -18,8 +18,8 @@ second class of portability bug.
 
 | Tool | Version (at time of writing) |
 |---|---|
-| gcc / g++ | 9.4.0 |
-| cmake | 3.16.3 |
+| gcc / g++ | 15.2.0 |
+| cmake | 4.2.3 |
 
 Also: git, vim, sudo, libicu.
 

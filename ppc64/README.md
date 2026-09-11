@@ -1,7 +1,7 @@
 # ppc64
 
 A **POWER** (ppc64le, little-endian) programming station, based on
-**Ubuntu 20.04**.
+**Ubuntu 26.04**.
 
 POWER is a genuinely different architecture: different vector unit (VSX rather
 than SSE/AVX or NEON), 128-byte cache lines on recent chips, and a weaker
@@ -15,8 +15,8 @@ distributions use. For big-endian testing, use the `s390` station instead.
 
 | Tool | Version (at time of writing) |
 |---|---|
-| gcc / g++ | 9.4.0 |
-| cmake | 3.16.3 |
+| gcc / g++ | 15.2.0 |
+| cmake | 4.2.3 |
 
 Also: git, vim, sudo, libicu.
 

@@ -22,9 +22,10 @@ git and vim.
 
 ## Notes
 
-Ubuntu 26.04 LTS (resolute) is the newest LTS and the most current of the
-plain Ubuntu stations. It carries GCC 15 and clang 21, and is the base used by
-`ubuntulatestllvm`.
+Ubuntu 26.04 LTS (resolute) is the newest LTS and the **default** station: the
+Dockerfile at the top of this repository is a copy of this one, and the `rds`
+script uses it. It carries GCC 15 and clang 21, and is the base used by
+`ubuntulatestllvm`. When in doubt, start here.
 
 ## Usage
 

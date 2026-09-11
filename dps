@@ -19,7 +19,7 @@ SCRIPTPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 PROGNAME="$(basename "$0")"
 
 tuser=$(echo "$USER" | tr -dc 'a-z')
-DEFAULT_IMG="${DPS_IMG:-ubuntu22}"
+DEFAULT_IMG="${DPS_IMG:-ubuntu26}"
 
 # ---------------------------------------------------------------------------
 # helpers
