@@ -60,7 +60,7 @@ userns_arg() {
 # Stations that target another architecture need QEMU binfmt handlers. Probe by
 # running a real binary rather than trusting image metadata, then defer to the
 # station's own script, which prints the full explanation.
-EMULATED_STATIONS=" armhf ppc64 s390 sve2 "
+EMULATED_STATIONS=" armhf loongson ppc64 s390 sve2 "
 needs_emulation() { [[ "$EMULATED_STATIONS" == *" $1 "* ]]; }
 
 build_image() {
