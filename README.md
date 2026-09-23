@@ -151,6 +151,7 @@ These let you find portability bugs without owning the hardware. All except
 |---|---|---|
 | [s390](s390) | s390x, Ubuntu 26.04 | **Big-endian.** The one target that finds endianness bugs |
 | [ppc64](ppc64) | ppc64le, Ubuntu 26.04 | POWER: VSX vectors, weak memory model, 128-byte cache lines |
+| [loongson](loongson) | loong64, Debian 13 | **LoongArch**: LSX/LASX vectors, weak memory model |
 | [armhf](armhf) | armv7l, Ubuntu 26.04 | **32-bit ARM**: AArch32 NEON, 32-bit `long` |
 | [alpinex86](alpinex86) | i386, Alpine 3.24 | **32-bit x86**: 4-byte pointers, `size_t` truncation. Native on x86-64 |
 | [riscv](riscv) | RISC-V cross + QEMU | Cross-compile to RISC-V and run under emulation |
@@ -167,7 +168,7 @@ Under Windows and macOS, docker will only use relatively little memory.  You may
 
 ## QEMU
 
-The `armhf`, `ppc64`, `s390` and `sve2` stations target a different processor
+The `armhf`, `loongson`, `ppc64`, `s390` and `sve2` stations target a different processor
 architecture than your machine, so they run under QEMU. That requires binfmt
 handlers registered in the kernel.
 
