@@ -10,7 +10,9 @@ FROM ubuntu:26.04
  RUN echo "$USER_NAME:$USER_NAME" | chpasswd && adduser $USER_NAME sudo
  RUN echo '----->'
  RUN echo 'root:Docker!' | chpasswd
- ENV TERM xterm-256color
+ ENV TERM=xterm-256color
+# Let qemu-riscv64 find the RISC-V dynamic loader and libraries without -L
+ ENV QEMU_LD_PREFIX=/usr/riscv64-linux-gnu
  USER $USER_NAME
  RUN gcc --version
  RUN cmake --version
